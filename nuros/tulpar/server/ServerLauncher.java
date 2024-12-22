@@ -23,7 +23,7 @@ public class ServerLauncher extends Launcher {
         catch (final Throwable e) {
             e.printStackTrace();
             SwingUtilities.invokeLater(() -> {
-                final ExceptionDialog ld = new ExceptionDialog("Unexpected System Error!", e.getMessage(), e);
+                final ExceptionDialog ld = new ExceptionDialog("Unexpected System Errors!", e.getMessage(), e);
                 ld.setDefaultCloseOperation(2);
                 ld.setAlwaysOnTop(true);
                 ld.expand();
