@@ -9,7 +9,8 @@ Server repository
 
 [Features](#features) •
 [Usage](#usage) •
-[Contributing](#contributing)
+[Contributing](#contributing) •
+[Build](#build)
 
 </div>
 
@@ -37,6 +38,12 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
+
+## Build
+
+To build the project you will need:
+- JDK 8 of the latest version, from azul [see this](https://www.azul.com/downloads/?version=java-8-lts&architecture=x86-64-bit&package=jdk-fx#zulu) and most importantly, with JavaFX support. (only for build)
+- [Jetty](https://github.com/jetty/jetty.project), [Jansi](https://github.com/fusesource/jansi), [asm-all](https://github.com/stephengold/asm), [jna](https://github.com/java-native-access/jna), [gson](https://github.com/google/gson) libraries
 
 ## Support
 
