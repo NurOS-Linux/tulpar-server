@@ -6,11 +6,11 @@
 		"address": "0.0.0.0",
 		"port": 80,
 		"runInBackground": "true",
-		"maxRequests": 60,
+		"maxRequests": 5,
 		"logFile": "./ip_requests.log"
 	},
 	"cli": {
-		"color": "cyan_bg",
+		"color": "cyan",
 		"hello": [
 			"▀█▀ █░█ █░░ █▀█ ▄▀█ █▀█ ▄▄ █▀ █▀▀ █▀█ █░█ █▀▀ █▀█   ▄█ ░ ▀█",
 			"░█░ █▄█ █▄▄ █▀▀ █▀█ █▀▄ ░░ ▄█ ██▄ █▀▄ ▀▄▀ ██▄ █▀▄   ░█ ▄ █▄"
