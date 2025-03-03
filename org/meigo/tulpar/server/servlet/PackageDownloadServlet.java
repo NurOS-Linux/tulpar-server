@@ -10,72 +10,53 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
 
 public class PackageDownloadServlet extends HttpServlet {
+    // Папка с пакетами, располагается рядом с программой
     private static final String PACKAGES_DIR = "package";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Ограничение по количеству запросов и логирование IP + путь
         if (!RequestLimiter.checkRequest(req, resp)) {
             return;
         }
 
-        String pathInfo = req.getPathInfo(); // Путь, например "/example/manifest.json"
+        // Ожидается URL вида: /package/<название>.apg
+        String pathInfo = req.getPathInfo();
         if (pathInfo == null || pathInfo.isEmpty()) {
-            resp.sendRedirect("/errors/404.html?errorCode=404"); // Если не указан путь, 404
+            resp.sendRedirect("/errors/404.html?errorCode=404");
             return;
         }
 
-        String packageName = pathInfo.split("/")[1]; // Извлекаем имя пакета, например "example"
-        File packageDir = new File(PACKAGES_DIR, packageName);
-        if (!packageDir.exists() || !packageDir.isDirectory()) {
-            resp.sendRedirect("/errors/404.html?errorCode=404"); // Пакет не найден
+        // Убираем ведущий слеш
+        String fileName = pathInfo.substring(1);
+
+        // Проверяем, что имя файла заканчивается на ".apg"
+        if (!fileName.endsWith(".apg")) {
+            resp.sendRedirect("/errors/404.html?errorCode=404");
             return;
         }
 
-        // Если путь указывает на файл, отображаем содержимое
-        if (pathInfo.contains(".")) {
-            String filePath = pathInfo.substring(pathInfo.indexOf(packageName) + packageName.length() + 1); // путь к файлу
-            File fileToView = new File(packageDir, filePath);
-            if (!fileToView.exists()) {
-                resp.sendRedirect("/errors/404.html?errorCode=404"); // Файл не найден
-                return;
-            }
-            showFile(fileToView, resp); // Отображаем файл
-        } else {
-            // Скачивание архива пакета, если не указан путь к файлу
-            File packageFile = new File(packageDir, "download/" + packageName + ".apg");
-            if (!packageFile.exists()) {
-                resp.sendRedirect("/errors/404.html?errorCode=404"); // Файл архива не найден
-                return;
-            }
-            downloadFile(packageFile, resp); // Скачиваем файл
+        // Формируем полный путь к файлу в папке package
+        File packageFile = new File(PACKAGES_DIR, fileName);
+        if (!packageFile.exists() || packageFile.isDirectory()) {
+            resp.sendRedirect("/errors/404.html?errorCode=404");
+            return;
         }
-    }
 
-    // Метод для отображения файла
-    private void showFile(File file, HttpServletResponse resp) throws IOException {
-        String contentType = Files.probeContentType(file.toPath());
-        resp.setContentType(contentType != null ? contentType : "application/octet-stream");
-
-        try (FileInputStream fis = new FileInputStream(file); OutputStream os = resp.getOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-        }
+        // Отдаем файл клиенту для скачивания
+        downloadFile(packageFile, resp);
     }
 
     // Метод для скачивания файла
     private void downloadFile(File file, HttpServletResponse resp) throws IOException {
-
         String fileName = file.getName();
         resp.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
         resp.setContentType("application/octet-stream");
 
-        try (FileInputStream fis = new FileInputStream(file); OutputStream os = resp.getOutputStream()) {
+        try (FileInputStream fis = new FileInputStream(file);
+             OutputStream os = resp.getOutputStream()) {
             byte[] buffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = fis.read(buffer)) != -1) {

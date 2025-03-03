@@ -163,7 +163,7 @@ public class Main {
 
         // Выводим строки с заданным ANSI-цветом и сбросом цвета в конце
         System.out.println(ansiColor + helloLine1 + " " + arch + " | " + os + " | " + osver);
-        System.out.println(ansiColor + helloLine2 + " BETA ver.2 " + "\u001B[0m");
+        System.out.println(ansiColor + helloLine2 + " BETA ver.3 " + "\u001B[0m");
 
         int width = AnsiConsole.getTerminalWidth();
         int oldwidth = width;

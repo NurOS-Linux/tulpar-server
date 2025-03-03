@@ -30,10 +30,12 @@ public class TServer {
         context.addServlet(new ServletHolder(new InfoServlet()), "/api/v2.0/info");
         context.addServlet(new ServletHolder(new PackageServlet()), "/api/v2.0/get"); // Работа с параметрами package и path
         context.addServlet(new ServletHolder(new PackageDownloadServlet()), "/package/*"); // Скачивание пакетов
+        Logger.warn("The PackageDownloadServlet (or /package/*) route has been changed to work only for downloading packages.");
         context.addServlet(new ServletHolder(new StaticPageServlet()), "/"); // Главная страница (статическая)
         context.addServlet(new ServletHolder(new CustomErrorServlet()), "/errors/404.html"); // Страница ошибки 404
         context.addServlet(new ServletHolder(new StaticFileServlet()), "/icons/*"); // Иконка сайта
         context.addServlet(new ServletHolder(new PackageListServlet()), "/api/v2.0/list"); // Список пакетов в JSON
+        Logger.success("Routes added");
 
         // Устанавливаем обработчик для статических файлов (например, для страницы ошибки)
         context.addServlet(new ServletHolder(new StaticFileServlet()), "/static/*");
