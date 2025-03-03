@@ -6,16 +6,22 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.meigo.tulpar.server.servlet.*;
 import org.meigo.tulpar.server.utils.CLI;
+import org.meigo.tulpar.server.utils.InMemoryRequestLog;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class TServer {
+
+    public static Server tserver;
+
+    private static InMemoryRequestLog requestLog;
+
     public static boolean start() throws Exception {
         Logger.devinfo("Configuring the server...");
         InetSocketAddress inetSocketAddress = new InetSocketAddress(Config.serveraddress, Config.serverport);
-        Server server = new Server(inetSocketAddress);
+        tserver = new Server(inetSocketAddress);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
@@ -33,12 +39,15 @@ public class TServer {
         context.addServlet(new ServletHolder(new StaticFileServlet()), "/static/*");
 
         // Устанавливаем контекст на сервер
-        server.setHandler(context);
+        tserver.setHandler(context);
+
+        requestLog = new InMemoryRequestLog();
+        tserver.setRequestLog(requestLog);
 
         new Thread(() -> {
             try {
-                server.start();
-                server.join();
+                tserver.start();
+                tserver.join();
             } catch (Exception e) {
                 Logger.error("Error while running server: " + e.getMessage());
                 System.exit(-1);
@@ -68,6 +77,11 @@ public class TServer {
         } catch (IOException e) {
             Logger.error("Failed to connect to " + ip + ":" + port + " (timeout or unreachable)");
         }
+    }
+
+    // Метод для получения логов запросов
+    public static InMemoryRequestLog getRequestLog() {
+        return requestLog;
     }
 
 }
