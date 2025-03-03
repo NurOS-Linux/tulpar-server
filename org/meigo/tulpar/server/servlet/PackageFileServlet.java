@@ -1,5 +1,7 @@
 package org.meigo.tulpar.server.servlet;
 
+import org.meigo.tulpar.server.utils.RequestLimiter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,10 @@ public class PackageFileServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!RequestLimiter.checkRequest(req, resp)) {
+            return;
+        }
+
         String pathInfo = req.getPathInfo(); // /example/manifest.json
         if (pathInfo == null || pathInfo.isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "File path is required.");

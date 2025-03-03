@@ -1,5 +1,7 @@
 package org.meigo.tulpar.server.servlet;
 
+import org.meigo.tulpar.server.utils.RequestLimiter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,10 @@ public class PackageDownloadServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!RequestLimiter.checkRequest(req, resp)) {
+            return;
+        }
+
         String pathInfo = req.getPathInfo(); // Путь, например "/example/manifest.json"
         if (pathInfo == null || pathInfo.isEmpty()) {
             resp.sendRedirect("/errors/404.html?errorCode=404"); // Если не указан путь, 404

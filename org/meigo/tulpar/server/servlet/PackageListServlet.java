@@ -1,6 +1,8 @@
 package org.meigo.tulpar.server.servlet;
 
 import com.google.gson.Gson;
+import org.meigo.tulpar.server.utils.RequestLimiter;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +19,10 @@ public class PackageListServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!RequestLimiter.checkRequest(req, resp)) {
+            return;
+        }
+
         File packagesDir = new File(PACKAGES_DIR);
         if (!packagesDir.exists() || !packagesDir.isDirectory()) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Packages directory not found.");

@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 public class CLI {
 
@@ -97,6 +98,35 @@ public class CLI {
             Logger.warn("Лог запросов не инициализирован.");
         }
     }
+
+    // Команда для ручной блокировки IP
+    public static void cmdban(String[] args) {
+        if (args.length < 1) {
+            System.out.println("Использование: ban <IP>");
+            return;
+        }
+        String ip = args[0];
+        RequestLimiter.blockIP(ip);
+        Logger.success("IP " + ip + " заблокирован.");
+    }
+
+    // Также можно добавить команду для разблокировки IP
+    public static void cmdunban(String[] args) {
+        if (args.length < 1) {
+            System.out.println("Использование: unban <IP>");
+            return;
+        }
+        String ip = args[0];
+        RequestLimiter.unblockIP(ip);
+        Logger.success("IP " + ip + " разблокирован.");
+    }
+
+    public static Set<String> cmdbanlist() {
+        Set<String> f = RequestLimiter.getBlockedIPs();
+        System.out.println(f);
+        return f;
+    }
+
 
 
     // Команда для настройки SSL с передачей аргументов

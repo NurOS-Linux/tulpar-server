@@ -1,5 +1,7 @@
 package org.meigo.tulpar.server.servlet;
 
+import org.meigo.tulpar.server.utils.RequestLimiter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +13,10 @@ import java.nio.file.Files;
 public class CustomErrorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!RequestLimiter.checkRequest(req, resp)) {
+            return;
+        }
+
         String errorCode = req.getParameter("errorCode");
         if ("404".equals(errorCode)) {
             File errorPage = new File("errors/404.html");

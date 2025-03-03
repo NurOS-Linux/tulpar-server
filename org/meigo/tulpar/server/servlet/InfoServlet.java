@@ -1,5 +1,7 @@
 package org.meigo.tulpar.server.servlet;
 
+import org.meigo.tulpar.server.utils.RequestLimiter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +11,10 @@ import java.io.IOException;
 public class InfoServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!RequestLimiter.checkRequest(req, resp)) {
+            return;
+        }
+
         String property = req.getParameter("property");
 
         if (property != null) {

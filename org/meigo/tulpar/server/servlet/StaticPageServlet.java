@@ -1,6 +1,7 @@
 package org.meigo.tulpar.server.servlet;
 
 import org.meigo.tulpar.server.Logger;
+import org.meigo.tulpar.server.utils.RequestLimiter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +16,11 @@ public class StaticPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        if (!RequestLimiter.checkRequest(req, resp)) {
+            return;
+        }
+
         File indexFile = new File(STATIC_DIR, "index.html");
         Logger.devinfo("Кто-то зашел на index.html " + req.getRemoteAddr());
         if (indexFile.exists()) {
