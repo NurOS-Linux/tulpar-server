@@ -5,6 +5,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.meigo.tulpar.server.servlet.*;
+import org.meigo.tulpar.server.utils.CLI;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -51,7 +52,7 @@ public class TServer {
         pingServer(Config.serveraddress, Config.serverport);
 
 
-
+        CLI.init();
         return true;
     }
 
