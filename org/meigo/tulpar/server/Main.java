@@ -38,10 +38,10 @@ public class Main {
         // checking
         if (isSupportedArchitecture(arch)) {
             Logger.devinfo("The software is supported on this architecture: " + arch);
-        } else {
-            Logger.error("The software is not supported on this architecture: " + arch);
-            System.exit(1);
-        }
+        } //else { Пока-что временно убрал, т.к. проверка пока что не нужна
+        //    Logger.error("The software is not supported on this architecture: " + arch);
+        //    System.exit(1);
+        //}
         Logger.info("Server Initialisation ...");
         Config.apiconfig = Integer.parseInt(Objects.requireNonNull(Config.get("api.config")));
         Config.serveraddress = Config.get("server.address");
