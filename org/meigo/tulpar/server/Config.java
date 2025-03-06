@@ -23,6 +23,10 @@ public class Config {
 
     public static int blockDurationMillis;
 
+    public static int MAX_DOWNLOADS_PER_IP;
+    public static int BUFFER_SIZE = 1024;
+    public static int MAX_DOWNLOAD_SPEED;
+
     // Sets the configuration file path
     public static void set(String filePath) {
         Config.filePath = filePath;

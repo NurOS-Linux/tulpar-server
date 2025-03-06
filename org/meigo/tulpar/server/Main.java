@@ -113,6 +113,10 @@ public class Main {
 
         Config.blockDurationMillis = Integer.parseInt(Objects.requireNonNull(Config.get("server.blockDurationMillis")));
 
+        Config.MAX_DOWNLOADS_PER_IP = Integer.parseInt(Objects.requireNonNull(Config.get("server.maxDownloadsPerIP")));
+        Config.MAX_DOWNLOAD_SPEED = Integer.parseInt(Objects.requireNonNull(Config.get("server.maxDownloadSpeed")));
+        Config.BUFFER_SIZE = Integer.parseInt(Objects.requireNonNull(Config.get("server.BUFFER_SIZE")));
+
         // Read CLI configuration for color and welcome message.
         JsonObject cli = config.getAsJsonObject("cli");
         String colorName = cli.get("color").getAsString();

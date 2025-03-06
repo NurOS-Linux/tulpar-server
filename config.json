@@ -9,7 +9,10 @@
 		"maxRequests": 5,
 		"blockDurationMillis": 60000,
 		"logFile": "./ip_requests.log",
-		"httpsRedirect": true
+		"httpsRedirect": true,
+		"maxDownloadsPerIP": 2,
+		"maxDownloadSpeed": 1048576,
+		"BUFFER_SIZE": 1024
 	},
 	"cli": {
 		"color": "bright_red",

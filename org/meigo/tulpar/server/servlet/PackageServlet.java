@@ -1,5 +1,6 @@
 package org.meigo.tulpar.server.servlet;
 
+import org.meigo.tulpar.server.utils.PackageDownloadManager;
 import org.meigo.tulpar.server.utils.RequestLimiter;
 
 import javax.servlet.ServletException;
@@ -43,7 +44,8 @@ public class PackageServlet extends HttpServlet {
                 resp.sendRedirect("/errors/404.html?errorCode=404"); // Исправлено на 404
                 return;
             }
-            downloadFile(packageFile, resp);
+            //downloadFile(packageFile, resp);
+            PackageDownloadManager.downloadPackage(packageFile, req, resp);
         } else {
             // Если есть путь, показываем файл
             File fileToView = new File(packageDir, path);
