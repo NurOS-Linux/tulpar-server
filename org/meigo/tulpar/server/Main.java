@@ -15,6 +15,8 @@ import org.meigo.tulpar.server.utils.DownloadManager;
 import org.meigo.tulpar.server.utils.UpdateManager;
 import org.python.util.PythonInterpreter;
 
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 
 import static org.meigo.tulpar.server.Config.config;
@@ -315,8 +317,16 @@ public class Main {
     /**
      * Enables UTF-8 encoding for the current console by calling SetConsoleOutputCP.
      */
-    public static void utf8enable() {
+    public static void utf8enable() throws UnsupportedEncodingException {
+        // Устанавливаем кодовую страницу UTF-8 для текущей консоли
         Kernel32.INSTANCE.SetConsoleOutputCP(65001);
+        // Переназначаем стандартные потоки вывода с указанием кодировки UTF-8
+        try {
+            System.setOut(new PrintStream(System.out, true, "UTF-8"));
+            System.setErr(new PrintStream(System.err, true, "UTF-8"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

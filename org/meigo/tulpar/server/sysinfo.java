@@ -1,11 +1,13 @@
 package org.meigo.tulpar.server;
 
+import java.io.UnsupportedEncodingException;
+
 public class sysinfo {
     public static String arch;
     public static String os;
     public static String osver;
 
-    public static void init() {
+    public static void init() throws UnsupportedEncodingException {
         Logger.devinfo("Initializing system information...");
         arch = System.getProperty("os.arch");
         osver = System.getProperty("os.version");
