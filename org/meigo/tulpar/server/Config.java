@@ -21,6 +21,8 @@ public class Config {
     public static String serverlogFile;
     public static boolean serverhttpsRedirect;
 
+    public static int blockDurationMillis;
+
     // Sets the configuration file path
     public static void set(String filePath) {
         Config.filePath = filePath;

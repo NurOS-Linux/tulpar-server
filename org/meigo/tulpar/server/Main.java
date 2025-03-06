@@ -111,6 +111,8 @@ public class Main {
         Config.serverlogFile = Config.get("server.logFile");
         Config.serverhttpsRedirect = Config.get("server.httpsRedirect").isEmpty();
 
+        Config.blockDurationMillis = Integer.parseInt(Objects.requireNonNull(Config.get("server.blockDurationMillis")));
+
         // Read CLI configuration for color and welcome message.
         JsonObject cli = config.getAsJsonObject("cli");
         String colorName = cli.get("color").getAsString();

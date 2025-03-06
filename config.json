@@ -7,6 +7,7 @@
 		"port": 80,
 		"runInBackground": "true",
 		"maxRequests": 5,
+		"blockDurationMillis": 60000,
 		"logFile": "./ip_requests.log",
 		"httpsRedirect": true
 	},

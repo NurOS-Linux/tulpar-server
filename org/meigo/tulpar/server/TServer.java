@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.meigo.tulpar.server.servlet.*;
 import org.meigo.tulpar.server.utils.CLI;
 import org.meigo.tulpar.server.utils.InMemoryRequestLog;
+import org.meigo.tulpar.server.utils.MetricsCollector;
 
 import javax.websocket.RemoteEndpoint;
 import java.io.IOException;
@@ -63,7 +64,8 @@ public class TServer {
 
         pingServer(Config.serveraddress, Config.serverport);
 
-
+        MetricsCollector.startMonitoring();
+        Logger.success("MetricsCollector was started.");
         CLI.init();
         return true;
     }
@@ -122,6 +124,7 @@ public class TServer {
 
     // Опционально: метод для остановки сервера
     public static void stopServer() {
+        MetricsCollector.stopMonitoring();
         try {
             tserver.stop();
         } catch (Exception e) {

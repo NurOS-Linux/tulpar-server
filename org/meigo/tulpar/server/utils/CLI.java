@@ -128,8 +128,8 @@ public class CLI {
         Logger.success("IP " + ip + " разблокирован.");
     }
 
-    public static Set<String> cmdbanlist() {
-        Set<String> f = RequestLimiter.getBlockedIPs();
+    public static Map<String, Long> cmdbanlist() {
+        Map<String, Long> f = RequestLimiter.getBlockedIPs();
         System.out.println(f);
         return f;
     }
