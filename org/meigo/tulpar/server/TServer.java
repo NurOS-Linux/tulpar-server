@@ -10,7 +10,9 @@ import org.meigo.tulpar.server.servlet.*;
 import org.meigo.tulpar.server.utils.CLI;
 import org.meigo.tulpar.server.utils.InMemoryRequestLog;
 
+import javax.websocket.RemoteEndpoint;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -53,15 +55,7 @@ public class TServer {
         requestLog = new InMemoryRequestLog();
         tserver.setRequestLog(requestLog);
 
-        new Thread(() -> {
-            try {
-                tserver.start();
-                tserver.join();
-            } catch (Exception e) {
-                Logger.error("Error while running server: " + e.getMessage());
-                System.exit(-1);
-            }
-        }).start();
+        AsyncStartServer();
         Logger.success("Server started at " + Config.serveraddress + ":" + Config.serverport);
         long endTime = System.currentTimeMillis(); // Время после старта
         double loadTime = (endTime - Main.startTime) / 1000.0; // Разница в секундах
@@ -85,6 +79,18 @@ public class TServer {
             Logger.success("Ping to " + ip + ":" + port + " = " + ping + " ms");
         } catch (IOException e) {
             Logger.error("Failed to connect to " + ip + ":" + port + " (timeout or unreachable)");
+            Logger.warn("Trying again...");
+            try {
+                long startTime2 = System.currentTimeMillis();
+                try (Socket socket = new Socket()) {
+                    socket.connect(new InetSocketAddress("localhost", port), 5000); // Тайм-аут 5 секунд
+                }
+                long endTime = System.currentTimeMillis();
+                long ping = endTime - startTime2;
+                Logger.success("Ping to localhost:" + port + " = " + ping + " ms");
+            } catch (IOException e2) {
+                Logger.error("Failed to connect to localhost:" + port + " (timeout or unreachable)");
+            }
         }
     }
 
@@ -93,4 +99,33 @@ public class TServer {
         return requestLog;
     }
 
+    // for plugins
+    public static void AsyncStartServer() {
+        new Thread(() -> {
+            try {
+                tserver.start();
+                tserver.join();
+            } catch (Exception e) {
+                // Если исключение обёрнуто, можно проверить его причину
+                Throwable cause = e.getCause();
+                if (cause instanceof BindException) {
+                    Logger.error("The port is busy: " + cause.getMessage());
+                    // Здесь можно выполнить дополнительные действия, например, уведомление или попытку запуска на другом порту
+                } else {
+                    Logger.error("error server startup: " + e.getMessage());
+                }
+                // Завершаем работу приложения, либо можно реализовать другой механизм завершения
+                System.exit(-1);
+            }
+        }).start();
+    }
+
+    // Опционально: метод для остановки сервера
+    public static void stopServer() {
+        try {
+            tserver.stop();
+        } catch (Exception e) {
+            Logger.error("Error while server stopping: " + e.getMessage());
+        }
+    }
 }

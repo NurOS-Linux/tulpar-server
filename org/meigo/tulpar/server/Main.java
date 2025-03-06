@@ -3,6 +3,9 @@ package org.meigo.tulpar.server;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.sun.jna.Function;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import org.eclipse.jetty.server.Server;
@@ -49,7 +52,7 @@ import static org.meigo.tulpar.server.sysinfo.*;
 public class Main {
 
     // Version information for the server. Update this value to reflect new releases.
-    public static final String VERSION = "v2.0-beta.1";
+    public static final String VERSION = "v2.0-beta.3";
 
     // Record the application start time in milliseconds.
     public static long startTime = System.currentTimeMillis();
@@ -72,7 +75,7 @@ public class Main {
         // Initialize system information and log the initialization status.
         sysinfo.init();
         Logger.devinfo("Init ...");
-        UpdateManager.checkForUpdates();
+        //UpdateManager.checkForUpdates();
 
         // Load configuration from file and set it up.
         Config.set("config.json");
@@ -303,21 +306,23 @@ public class Main {
         SetConsoleModeFunc.invoke(WinDef.BOOL.class, new Object[]{hOut, dwMode});
     }
 
-    /**
-     * Enables UTF-8 encoding in the terminal.
-     *
-     * This method executes a Python command to switch the system code page to UTF-8.
-     */
-    public static void utf8enable() {
-        pyInterp.exec("import os; os.system('chcp 65001')");
+    public interface Kernel32 extends Library {
+        Kernel32 INSTANCE = Native.load("kernel32", Kernel32.class);
+        boolean SetConsoleOutputCP(int codePage);
+        boolean SetConsoleTitleA(String lpConsoleTitle);
     }
 
     /**
-     * Sets the terminal window title.
-     *
-     * This method executes a Python command to change the terminal title to "TulparServer".
+     * Enables UTF-8 encoding for the current console by calling SetConsoleOutputCP.
+     */
+    public static void utf8enable() {
+        Kernel32.INSTANCE.SetConsoleOutputCP(65001);
+    }
+
+    /**
+     * Sets the title of the console window.
      */
     public static void setwindowtitle() {
-        pyInterp.exec("import os; os.system('title TulparServer')");
+        Kernel32.INSTANCE.SetConsoleTitleA("TulparServer");
     }
 }

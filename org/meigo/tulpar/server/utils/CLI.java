@@ -87,7 +87,14 @@ public class CLI {
     public static void cmdshutdown() throws Exception {
         Logger.devinfo("Команда shutdown вызвана.");
         running = false;
-        TServer.tserver.stop();
+        TServer.stopServer();
+    }
+
+    public static void cmdrestart() throws Exception {
+        TServer.stopServer();
+        TServer.AsyncStartServer();
+        Logger.success("Server started at " + Config.serveraddress + ":" + Config.serverport);
+        TServer.pingServer(Config.serveraddress, Config.serverport);
     }
 
     public static void cmdgetRequestLog() throws Exception {
@@ -140,7 +147,7 @@ public class CLI {
         String keystorePassword = args[1];
         String keyManagerPassword = args[2];
 
-        TServer.tserver.stop();
+        TServer.stopServer();
         SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePath(keystorePath);
         sslContextFactory.setKeyStorePassword(keystorePassword);
@@ -153,8 +160,9 @@ public class CLI {
         // TServer.tserver.addConnector(sslConnector);
 
         Logger.success("SSL настроен успешно с keystore: " + keystorePath);
-        TServer.tserver.start();
-        TServer.tserver.join();
+        TServer.AsyncStartServer();
+        Logger.success("Server started at " + Config.serveraddress + ":" + Config.serverport);
+        TServer.pingServer(Config.serveraddress, Config.serverport);
     }
 
     // Команда вывода справки

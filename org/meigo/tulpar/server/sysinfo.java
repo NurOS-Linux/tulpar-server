@@ -20,9 +20,9 @@ public class sysinfo {
             Main.enableColorsForWindows();
             Logger.warn("Since you are using Windows, we have included native support for ANSI colours.");
             Main.utf8enable();
-            Logger.warn("UTF8 colour support was enabled using the chcp 65001 command");
+            Logger.warn("UTF8 colour native support was enabled");
             Main.setwindowtitle();
-            Logger.warn("Set the command line title using the 'title TulparServer' command");
+            Logger.warn("Title was changed");
         } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
             os = "Linux";
         } else if (osName.contains("mac")) {
