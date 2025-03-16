@@ -12,11 +12,15 @@ import org.eclipse.jetty.server.Server;
 import org.fusesource.jansi.AnsiConsole;
 import org.meigo.tulpar.server.Config;
 import org.meigo.tulpar.server.utils.DownloadManager;
+import org.meigo.tulpar.server.utils.PackageScanner;
 import org.meigo.tulpar.server.utils.UpdateManager;
 import org.python.util.PythonInterpreter;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Objects;
 
 import static org.meigo.tulpar.server.Config.config;
@@ -74,6 +78,10 @@ public class Main {
      * @throws Exception If initialization or server startup fails.
      */
     public static void main(String[] args) throws Exception {
+        checkServerAvailability();
+
+
+
         // Initialize system information and log the initialization status.
         sysinfo.init();
         Logger.devinfo("Init ...");
@@ -116,6 +124,11 @@ public class Main {
         Config.MAX_DOWNLOADS_PER_IP = Integer.parseInt(Objects.requireNonNull(Config.get("server.maxDownloadsPerIP")));
         Config.MAX_DOWNLOAD_SPEED = Integer.parseInt(Objects.requireNonNull(Config.get("server.maxDownloadSpeed")));
         Config.BUFFER_SIZE = Integer.parseInt(Objects.requireNonNull(Config.get("server.BUFFER_SIZE")));
+
+        System.out.println("loading...");
+        try (PythonInterpreter pyInterp = new PythonInterpreter()) {
+            PackageScanner.scanAndUnpack(pyInterp);
+        }
 
         // Read CLI configuration for color and welcome message.
         JsonObject cli = config.getAsJsonObject("cli");
@@ -341,4 +354,54 @@ public class Main {
     public static void setwindowtitle() {
         Kernel32.INSTANCE.SetConsoleTitleA("TulparServer");
     }
+
+    public static void checkServerAvailability() {
+        if (isClassAvailable("org.eclipse.jetty.server.Server")) {
+            Logger.info("Server API is available");
+            return;
+        }
+        loadJarsFromFolder("./libs");
+        if (isClassAvailable("org.eclipse.jetty.server.Server")) {
+            return;
+        }
+        System.exit(1);
+    }
+
+    private static boolean isClassAvailable(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    private static void loadJarsFromFolder(String folderPath) {
+        File libsDir = new File(folderPath);
+        if (!libsDir.exists() || !libsDir.isDirectory()) {
+            return;
+        }
+        File[] jarFiles = libsDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".jar"));
+        if (jarFiles == null || jarFiles.length == 0) {
+            return;
+        }
+        try {
+            // Получаем системный загрузчик классов
+            URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            Class<URLClassLoader> sysClass = URLClassLoader.class;
+            // Через рефлексию получаем доступ к методу addURL
+            java.lang.reflect.Method addUrlMethod = sysClass.getDeclaredMethod("addURL", URL.class);
+            addUrlMethod.setAccessible(true);
+            // Добавляем каждый jar в системный classloader
+            for (File jar : jarFiles) {
+                Logger.devinfo("Loaded: " + jar.getName());
+                URL jarUrl = jar.toURI().toURL();
+                addUrlMethod.invoke(sysLoader, jarUrl);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
 }

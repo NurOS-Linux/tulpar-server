@@ -34,8 +34,9 @@ public class TServer {
         // Маршруты
         context.addServlet(new ServletHolder(new InfoServlet()), "/api/v2.0/info");
         context.addServlet(new ServletHolder(new PackageServlet()), "/api/v2.0/get"); // Работа с параметрами package и path
-        context.addServlet(new ServletHolder(new PackageDownloadServlet()), "/package/*"); // Скачивание пакетов
-        Logger.warn("The PackageDownloadServlet (or /package/*) route has been changed to work only for downloading packages.");
+        //context.addServlet(new ServletHolder(new PackageDownloadServlet()), "/package/*"); // Скачивание пакетов
+        // Depreacted , added vadimAPI
+        //Logger.warn("The PackageDownloadServlet (or /package/*) route has been changed to work only for downloading packages.");
         //context.addServlet(new ServletHolder(new StaticPageServlet()), "/"); // Главная страница (статическая)
         Logger.warn("StaticPage deprecated");
         context.addServlet(new ServletHolder(new CustomErrorServlet()), "/errors/404.html"); // Страница ошибки 404
@@ -45,6 +46,9 @@ public class TServer {
         context.addServlet(new ServletHolder(new FaviconServlet()), "/favicon.ico");
         context.addServlet(new ServletHolder(new IndexServlet()), "/index.html");
         Logger.success("Routes added");
+
+        context.addServlet(new ServletHolder(new VadimAPIServlet()), "/packages/*");
+        Logger.success("VadimAPI added");
 
 
         // Устанавливаем обработчик для статических файлов (например, для страницы ошибки)
