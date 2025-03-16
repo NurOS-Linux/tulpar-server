@@ -1,6 +1,8 @@
 package org.meigo.tulpar.server.servlet;
 
 import org.meigo.tulpar.server.Logger;
+import org.meigo.tulpar.server.utils.PackageDownloadManager;
+import org.meigo.tulpar.server.utils.RequestLimiter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +21,10 @@ public class VadimAPIServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!RequestLimiter.checkRequest(req, resp)) {
+            return;
+        }
+
         Logger.info("Received request: " + req.getRequestURI());
         String pathInfo = req.getPathInfo();
         Logger.info("Path info: " + pathInfo);
@@ -71,18 +77,7 @@ public class VadimAPIServlet extends HttpServlet {
         // Формируем новое имя для скачиваемого файла: {packageName}-{version}_{arch}.apg
         String downloadFileName = packageName + "-" + version + "_" + arch + ".apg";
         Logger.info("Download file will be named: " + downloadFileName);
-        resp.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFileName + "\"");
-        resp.setContentType("application/octet-stream");
-        resp.setContentLengthLong(file.length());
-
-        try (FileInputStream fis = new FileInputStream(file);
-             OutputStream os = resp.getOutputStream()) {
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-        }
+        PackageDownloadManager.downloadPackage(file, req, resp);
         Logger.info("File download completed successfully.");
     }
 

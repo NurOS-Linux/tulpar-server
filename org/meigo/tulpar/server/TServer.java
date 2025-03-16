@@ -32,8 +32,8 @@ public class TServer {
         context.setContextPath("/");
 
         // Маршруты
-        context.addServlet(new ServletHolder(new InfoServlet()), "/api/v2.0/info");
-        context.addServlet(new ServletHolder(new PackageServlet()), "/api/v2.0/get"); // Работа с параметрами package и path
+        //context.addServlet(new ServletHolder(new InfoServlet()), "/api/v2.0/info");
+        //context.addServlet(new ServletHolder(new PackageServlet()), "/api/v2.0/get"); // Работа с параметрами package и path
         //context.addServlet(new ServletHolder(new PackageDownloadServlet()), "/package/*"); // Скачивание пакетов
         // Depreacted , added vadimAPI
         //Logger.warn("The PackageDownloadServlet (or /package/*) route has been changed to work only for downloading packages.");
@@ -41,7 +41,7 @@ public class TServer {
         Logger.warn("StaticPage deprecated");
         context.addServlet(new ServletHolder(new CustomErrorServlet()), "/errors/404.html"); // Страница ошибки 404
         context.addServlet(new ServletHolder(new StaticFileServlet()), "/icons/*"); // Иконка сайта
-        context.addServlet(new ServletHolder(new PackageListServlet()), "/api/v2.0/list"); // Список пакетов в JSON
+        //context.addServlet(new ServletHolder(new PackageListServlet()), "/api/v2.0/list"); // Список пакетов в JSON
 
         context.addServlet(new ServletHolder(new FaviconServlet()), "/favicon.ico");
         context.addServlet(new ServletHolder(new IndexServlet()), "/index.html");
