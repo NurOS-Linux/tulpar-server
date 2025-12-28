@@ -60,6 +60,7 @@ class StartCommand : CliktCommand(name = "start") {
             if (daemon) {
                 TulparContext.logger.info("Server started in background (non-blocking mode).")
                 // в разработке
+                // перенос с java на kotlin
             }
 
         } catch (e: Exception) {
